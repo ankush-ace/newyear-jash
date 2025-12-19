@@ -21,11 +21,11 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#fff;
+  color:white;
   font-size:26px;
-  z-index:10;
   background:radial-gradient(circle,#111,#000);
-  animation:pulse 1.5s infinite;
+  animation:pulse 1.6s infinite;
+  z-index:10;
 }
 @keyframes pulse{0%{opacity:.4}50%{opacity:1}100%{opacity:.4}}
 
@@ -37,13 +37,44 @@ html,body{
   z-index:2;
 }
 
+/* BACKGROUND IMAGE */
+#content::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url("PXL_20251216_194043669~2.jpg") center/cover no-repeat;
+  filter:blur(6px) brightness(.55);
+  opacity:0;
+  transition:opacity 2.5s ease;
+  animation:bgzoom 25s linear infinite alternate;
+  z-index:-1;
+}
+#content.show::before{opacity:1;}
+
+@keyframes bgzoom{
+  from{transform:scale(1)}
+  to{transform:scale(1.12)}
+}
+
+/* FOREGROUND */
+.container{
+  position:relative;
+  z-index:3;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
 /* IMAGE */
-img{
+.main-img{
   width:260px;
   max-width:80%;
   border-radius:22px;
-  box-shadow:0 0 40px rgba(255,100,130,.6);
-  animation:zoom 2.5s ease forwards;
+  box-shadow:0 0 50px rgba(255,80,120,.7);
+  animation:zoom 2.8s ease forwards;
 }
 @keyframes zoom{
   from{opacity:0;transform:scale(.85)}
@@ -59,14 +90,14 @@ img{
 }
 @keyframes fade{from{opacity:0}to{opacity:1}}
 
-h1{font-size:30px;margin:10px 0}
-p{font-size:18px;line-height:1.6;max-width:340px}
-
-/* COUNTDOWN */
-#countdown{
-  font-size:16px;
-  margin-bottom:10px;
-  opacity:.8;
+h1{
+  font-size:30px;
+  margin:10px 0;
+}
+p{
+  font-size:18px;
+  line-height:1.6;
+  max-width:340px;
 }
 
 /* CANVAS */
@@ -85,11 +116,9 @@ canvas{
 <div id="content">
   <canvas id="fx"></canvas>
 
-  <div style="position:relative;z-index:3;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
-
-    <div id="countdown"></div>
-
-    <img src="data:image/jpeg;base64,/9j/4QQiRXhpZgAASUkqAAgAAAANAAABBAABAAAAGgoAAAEBBAABAAAAHw0AACgBAwABAAAAAgAAAA8BAgAHAAAAqgAAABABAgAMAAAAsQAAADEBAgAVAAAAvQAAADIBAgAUAAAA0gAAABIBAwABAAAAAQAAABMCAwABAAAAAQAAAGmHBAABAAAA9gAAACWIBAABAAAAogMAAABJREFUeJzt3QeYJEd5x/Hv0jkk..." />
+  <div class="container">
+    <img class="main-img"
+      src="data:image/jpeg;base64,/9j/4QQiRXhpZgAASUkqAAgAAAANAAABBAABAAAAGgoAAAEBBAABAAAAHw0AACgBAwABAAAAAgAAAA8BAgAHAAAAqgAAABABAgAMAAAAsQAAADEBAgAVAAAAvQAAADIBAgAUAAAA0gAAABIBAwABAAAAAQAAABMCAwABAAAAAQAAAGmHBAABAAAA9gAAACWIBAABAAAAogMAAABJREFUeJzt3QeYJEd5x/Hv0jkk..." />
 
     <div class="text">
       <h1>Happy New Year, Jash 🎆</h1>
@@ -106,7 +135,7 @@ canvas{
         main bas tumhara haath pakad kar chalna chahta hoon.
       </p>
 
-      <p style="margin-top:12px;">— Your Husband 💖</p>
+      <p style="margin-top:14px;">— Your Husband 💖</p>
     </div>
   </div>
 </div>
@@ -124,23 +153,10 @@ const music=document.getElementById("music");
 tap.onclick=()=>{
   tap.style.display="none";
   content.style.display="block";
+  setTimeout(()=>content.classList.add("show"),50);
   music.play();
   startFX();
 };
-
-/* COUNTDOWN */
-const cd=document.getElementById("countdown");
-const newYear=new Date(new Date().getFullYear()+1,0,1);
-setInterval(()=>{
-  const now=new Date();
-  const diff=newYear-now;
-  if(diff<=0){cd.style.display="none";return;}
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor(diff/3600000)%24;
-  const m=Math.floor(diff/60000)%60;
-  const s=Math.floor(diff/1000)%60;
-  cd.innerText=`New Year arrives in ${d}d ${h}h ${m}m ${s}s`;
-},1000);
 
 /* FIREWORKS + HEARTS */
 const c=document.getElementById("fx");
@@ -152,12 +168,12 @@ function resize(){c.width=innerWidth;c.height=innerHeight;}
 let particles=[];
 function startFX(){
   setInterval(()=>{
-    for(let i=0;i<60;i++){
+    for(let i=0;i<70;i++){
       particles.push({
         x:Math.random()*c.width,
         y:c.height,
         vx:(Math.random()-.5)*4,
-        vy:Math.random()*-8-6,
+        vy:Math.random()*-9-7,
         life:120,
         heart:Math.random()>.6
       });
@@ -179,7 +195,7 @@ function animate(){
 
     x.fillStyle=p.heart?"#ff4d6d":"hsl("+Math.random()*360+",100%,60%)";
     if(p.heart){
-      x.font="14px serif";
+      x.font="16px serif";
       x.fillText("❤",p.x,p.y);
     }else{
       x.fillRect(p.x,p.y,3,3);
